@@ -1,0 +1,8 @@
+<div *ngIf="item" class="app-product">
+    <div>name: {{ item.name }}</div>
+    <div>description: {{ item.description }}</div>
+    <div>price: {{ item.price }}</div>
+    <div>category: {{ item.category }}</div>
+    <div>isAvailable: {{ item.isAvailable }}</div>
+    <button (click)="onAddToCart(item)">Buy</button>
+</div>

@@ -1,0 +1,13 @@
+<ng-container *ngIf="cartProducts | async as list">
+    <div class="app-cart-list" *ngIf="list.length; else emptyBlock">
+        <span>Purchased goods:</span>
+        <ul>
+            <ng-container *ngFor="let cartProduct of list; trackBy: trackByItems">
+                <li>{{ cartProduct.name }} X {{ cartProduct.count }}</li>
+            </ng-container>
+        </ul>
+    </div>
+    <ng-template #emptyBlock>
+        <span>Your cart is empty</span>
+    </ng-template>
+</ng-container>
