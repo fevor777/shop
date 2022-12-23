@@ -5,7 +5,8 @@ import { Category } from './category';
 @Component({
   selector: 'app-first',
   templateUrl: './first.component.html',
-  styleUrls: ['./first.component.css']
+  styleUrls: ['./first.component.css'],
+  standalone: true,
 })
 export class FirstComponent {
   name: string = 'first component name';
