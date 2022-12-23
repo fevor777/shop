@@ -4,5 +4,5 @@
     <div>price: {{ item.price }}</div>
     <div>category: {{ item.category }}</div>
     <div>isAvailable: {{ item.isAvailable }}</div>
-    <button (click)="onAddToCart(item)">Buy</button>
+    <button [disabled]="!item.isAvailable" (click)="onAddToCart(item)">Add to cart</button>
 </div>

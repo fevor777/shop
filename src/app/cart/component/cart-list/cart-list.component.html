@@ -1,11 +1,22 @@
 <ng-container *ngIf="cartProducts | async as list">
     <div class="app-cart-list" *ngIf="list.length; else emptyBlock">
-        <span>Purchased goods:</span>
+        <span>Your cart:</span>
         <ul>
             <ng-container *ngFor="let cartProduct of list; trackBy: trackByItems">
-                <li>{{ cartProduct.name }} X {{ cartProduct.count }}</li>
+                <li>
+                    <app-cart-item
+                        appHighlightDirective
+                        [item]="cartProduct"
+                        (quantityIncrease)="onQuantityIncrease($event)"
+                        (quantityDecrease)="onQuantityDecrease($event)"
+                        (deleteItem)="onDeleteItem($event)"
+                    ></app-cart-item>
+                </li>
+                
             </ng-container>
         </ul>
+        <div [ngStyle]="{ 'color': 'red' }">Total cost: {{ cartService.totalCost }}</div>
+        <div [ngStyle]="{ 'color': 'green' }">Total quantity: {{ cartService.totalQuantity }}</div>
     </div>
     <ng-template #emptyBlock>
         <span>Your cart is empty</span>

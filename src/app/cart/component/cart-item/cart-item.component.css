@@ -1,0 +1,15 @@
+.app-add-item {
+    margin-left: 10px;
+    color: green;
+    font-size: 15px;
+}
+
+.app-minus-item {
+    color: rgb(255, 141, 33);
+    font-size: 15px;
+    margin-right: 10px;
+}
+
+.app-trash {
+    font-size: 15px;
+}

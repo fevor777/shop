@@ -1,1 +1,5 @@
-<app-product *ngFor="let product of products" [item]="product"></app-product>
+<app-product 
+    *ngFor="let product of products" 
+    [item]="product"
+    (addProductToCart)="onAddToCart($event)">
+</app-product>
