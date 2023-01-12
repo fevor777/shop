@@ -2,6 +2,7 @@
     <div class="app-cart-list" *ngIf="list.length; else emptyBlock">
         <span>Your cart:</span>
         <ul>
+          <!-- а тут нельзя разместить *ngFor на li элементе? -->
             <ng-container *ngFor="let cartProduct of list; trackBy: trackByItems">
                 <li>
                     <app-cart-item
@@ -12,7 +13,7 @@
                         (deleteItem)="onDeleteItem($event)"
                     ></app-cart-item>
                 </li>
-                
+
             </ng-container>
         </ul>
         <div [ngStyle]="{ 'color': 'red' }">Total cost: {{ cartService.totalCost }}</div>
