@@ -2,19 +2,15 @@
     <div class="app-cart-list" *ngIf="list.length; else emptyBlock">
         <span>Your cart:</span>
         <ul>
-          <!-- а тут нельзя разместить *ngFor на li элементе? -->
-            <ng-container *ngFor="let cartProduct of list; trackBy: trackByItems">
-                <li>
-                    <app-cart-item
-                        appHighlightDirective
-                        [item]="cartProduct"
-                        (quantityIncrease)="onQuantityIncrease($event)"
-                        (quantityDecrease)="onQuantityDecrease($event)"
-                        (deleteItem)="onDeleteItem($event)"
-                    ></app-cart-item>
-                </li>
-
-            </ng-container>
+            <li *ngFor="let cartProduct of list; trackBy: trackByItems">
+                <app-cart-item
+                    appHighlightDirective
+                    [item]="cartProduct"
+                    (quantityIncrease)="onQuantityIncrease($event)"
+                    (quantityDecrease)="onQuantityDecrease($event)"
+                    (deleteItem)="onDeleteItem($event)"
+                ></app-cart-item>
+            </li>
         </ul>
         <div [ngStyle]="{ 'color': 'red' }">Total cost: {{ cartService.totalCost }}</div>
         <div [ngStyle]="{ 'color': 'green' }">Total quantity: {{ cartService.totalQuantity }}</div>
