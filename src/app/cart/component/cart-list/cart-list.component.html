@@ -1,5 +1,5 @@
 <ng-container *ngIf="cartProducts | async as list">
-    <div class="app-cart-list" *ngIf="list.length; else emptyBlock">
+    <div class="app-cart-list" *ngIf="!cartService.isEmptyCart(); else emptyBlock">
         <span>Your cart:</span>
         <ul>
             <li *ngFor="let cartProduct of list; trackBy: trackByItems">

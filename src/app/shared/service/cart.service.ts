@@ -9,12 +9,12 @@ import { ProductModel } from '../model/product.model';
 })
 export class CartService {
 
-  private readonly productListSubject: BehaviorSubject<CartProductModel[]> = new BehaviorSubject<CartProductModel[]>([]);
-  readonly productList: Observable<CartProductModel[]> =this.productListSubject.asObservable();
+  private readonly cartProductsSubject: BehaviorSubject<CartProductModel[]> = new BehaviorSubject<CartProductModel[]>([]);
+  readonly cartProducts: Observable<CartProductModel[]> =this.cartProductsSubject.asObservable();
 
   get totalCost(): number {
     let result = 0;
-    const products = this.getProductList();
+    const products = this.getProducts();
     if (Array.isArray(products) && products.length > 0) {
       result = products.map(p => p.count * p.price).reduce((r, c) => r + c);
     }
@@ -23,59 +23,73 @@ export class CartService {
 
   get totalQuantity(): number {
     let result = 0;
-    const products = this.getProductList();
+    const products = this.getProducts();
     if (Array.isArray(products) && products.length > 0) {
       result = products.map(p => p.count).reduce((r, c) => r + c);
     } 
     return result;
   }
 
-  getProductList(): CartProductModel[] {
-    return this.productListSubject.getValue();
+  getProducts(): CartProductModel[] {
+    return this.cartProductsSubject.getValue();
   }
 
-  setProductList(products: CartProductModel[]): void {
-    this.productListSubject.next(products);
+  addProduct(product: ProductModel): void {
+    if (product) {
+      const products = this.getProducts();
+      const newCartProduct = { ...product, count: 1};
+      if (Array.isArray(products) && products.length > 0) {
+        const cartProduct = products.find((p) => p.id === product.id);
+        if (cartProduct) {
+          this.quantityIncrease(product);
+        } else {
+          const updatedProducts = [ ...products, newCartProduct];
+          this.cartProductsSubject.next(updatedProducts);
+        }
+      } else {
+        this.cartProductsSubject.next([newCartProduct]);
+      }
+    }
   }
 
   quantityIncrease(product: ProductModel): void {
-    const products = this.getProductList();
-    let updatedProducts = [ ...products];
-    if (product && Array.isArray(products)) {
-      const index = updatedProducts.findIndex((p) => p.id === product.id);
-      if (index !== -1) {
-        const p = updatedProducts[index];
-        updatedProducts[index] = { ...p, count: ++p.count };
-      } else {
-        updatedProducts = [ ...products, { ...product, count: 1}];
-      }
-      this.productListSubject.next(updatedProducts);
-    }
+    this.changeQuantity(product, 1);
   }
 
   quantityDecrease(product: ProductModel): void {
-    const products = this.getProductList();
-    let updatedProducts = [ ...products];
+    this.changeQuantity(product, -1);
+  }
+
+  removeProduct(product: ProductModel): void {
+    const products = this.getProducts();
     if (product && Array.isArray(products)) {
-      const index = updatedProducts.findIndex((p) => p.id === product.id);
-      if (index !== -1) {
-      updatedProducts[index] = { ... updatedProducts[index]};
-      let productInList = updatedProducts[index];
-        if (productInList.count > 1) {
-          productInList.count -= 1;
-          this.productListSubject.next(updatedProducts);
-        } else {
-          this.deleteProduct(productInList);
-        }
-      }
+      const updatedProducts = products.filter((p) => p.id !== product.id);
+      this.cartProductsSubject.next(updatedProducts);
     }
   }
 
-  deleteProduct(product: ProductModel): void {
-    const products = this.getProductList();
+  removeAllProducts(): void {
+    this.cartProductsSubject.next([]);
+  }
+
+  isEmptyCart(): boolean {
+    return this.getProducts()?.length === 0; 
+  }
+
+  private changeQuantity(product: ProductModel, count: number): void {
+    const products = this.getProducts();
     if (product && Array.isArray(products)) {
-      const updatedProducts = products.filter((p) => p.id !== product.id);
-      this.productListSubject.next(updatedProducts);
+      let updatedProducts = [ ...products];
+      const index = updatedProducts.findIndex((p) => p.id === product.id);
+      if (index !== -1) {
+        const p = updatedProducts[index];
+        updatedProducts[index] = { ...p, count: p.count + count };
+        if (updatedProducts[index].count === 0) {
+          this.removeProduct(product);
+        } else {
+          this.cartProductsSubject.next(updatedProducts);
+        }
+      }
     }
   }
 }

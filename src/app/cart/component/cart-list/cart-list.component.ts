@@ -19,7 +19,7 @@ export class CartListComponent {
   readonly cartProducts!: Observable<CartProductModel[]>;
 
   constructor(public cartService: CartService) {
-    this.cartProducts = this.cartService.productList;
+    this.cartProducts = this.cartService.cartProducts;
   }
 
   trackByItems(index: number, item: CartProductModel): number { 
@@ -35,7 +35,7 @@ export class CartListComponent {
   }
 
   onDeleteItem(item: CartProductModel): void {
-    this.cartService.deleteProduct(item);
+    this.cartService.removeProduct(item);
 
   }
 

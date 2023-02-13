@@ -22,7 +22,7 @@ export class ProductListComponent {
   }
 
   onAddToCart(product: ProductModel): void {
-    this.cartService.quantityIncrease(product);
+    this.cartService.addProduct(product);
   }
 
 }
