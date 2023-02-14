@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { OrderByComponent } from '../../../shared/component/order-by.component';
+import { OrderByPipe } from '../../../shared/pipes/order-by.pipe';
+import { SharedModule } from '../../../shared/shared.module';
 import { CartProductModel } from '../../../shared/model/cart-product.model';
 import { CartService } from '../../../shared/service/cart.service';
 import { CartItemComponent } from '../cart-item/cart-item.component';
+import { SelectOption } from '../../../shared/model/select-option';
 
 @Component({
   selector: 'app-cart-list',
@@ -12,11 +15,20 @@ import { CartItemComponent } from '../cart-item/cart-item.component';
   styleUrls: ['./cart-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CartItemComponent, CommonModule, SharedModule]
+  imports: [CartItemComponent, CommonModule, SharedModule, OrderByPipe, OrderByComponent]
 })
 export class CartListComponent {
 
   readonly cartProducts!: Observable<CartProductModel[]>;
+
+  readonly cartProductModelKeys: SelectOption[] = [
+    { id: 'name', name: 'Name'},
+    { id: 'count', name: 'Count'},
+    { id: 'price', name: 'Price'},
+  ];
+
+  sortKey: string = this.cartProductModelKeys[0].id;
+  sortOrder: boolean = true;
 
   constructor(public cartService: CartService) {
     this.cartProducts = this.cartService.cartProducts;
@@ -36,7 +48,14 @@ export class CartListComponent {
 
   onDeleteItem(item: CartProductModel): void {
     this.cartService.removeProduct(item);
+  }
 
+  onSortKeyChange(value: SelectOption): void {
+    this.sortKey = value.id;
+  }
+
+  onSortOrderChange(value: boolean): void {
+    this.sortOrder = value;
   }
 
 }

@@ -1,5 +1,10 @@
+<app-order-by
+    [keys]="productModelKeys"
+    (keyChange)="onSortKeyChange($event)"
+    (sortOrderChange)="onSortOrderChange($event)">
+</app-order-by>
 <app-product 
-    *ngFor="let product of products" 
+    *ngFor="let product of products | async | orderByPipe: sortKey : sortOrder" 
     [item]="product"
     (addProductToCart)="onAddToCart($event)">
 </app-product>

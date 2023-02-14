@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DEFAULT_CURRENCY_CODE, ElementRef, ViewChild } from '@angular/core';
 
 import { CartListComponent } from './cart/component/cart-list/cart-list.component';
 import { FirstComponent } from './first/first.component';
 import { OrderModule } from './order/order.module';
-import { ProductModule } from './product/product.module';
+import { ProductListComponent } from './product/component/product-list/product-list.component';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +11,14 @@ import { ProductModule } from './product/product.module';
   styleUrls: ['./app.component.css'],
   standalone: true,
   imports: [
-    ProductModule,
+    ProductListComponent,
     OrderModule,
     FirstComponent,
-    CartListComponent
+    CartListComponent,
   ],
+  providers: [
+    { provide: DEFAULT_CURRENCY_CODE, useValue: 'USD' }
+  ]
 })
 export class AppComponent implements AfterViewInit {
 

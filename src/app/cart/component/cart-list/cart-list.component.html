@@ -1,8 +1,13 @@
 <ng-container *ngIf="cartProducts | async as list">
     <div class="app-cart-list" *ngIf="!cartService.isEmptyCart(); else emptyBlock">
+        <app-order-by
+            [keys]="cartProductModelKeys"
+            (keyChange)="onSortKeyChange($event)"
+            (sortOrderChange)="onSortOrderChange($event)">
+        </app-order-by>
         <span>Your cart:</span>
         <ul>
-            <li *ngFor="let cartProduct of list; trackBy: trackByItems">
+            <li *ngFor="let cartProduct of list | orderByPipe: sortKey : sortOrder; trackBy: trackByItems">
                 <app-cart-item
                     appHighlightDirective
                     [item]="cartProduct"
@@ -12,7 +17,7 @@
                 ></app-cart-item>
             </li>
         </ul>
-        <div [ngStyle]="{ 'color': 'red' }">Total cost: {{ cartService.totalCost }}</div>
+        <div [ngStyle]="{ 'color': 'red' }">Total cost: {{ cartService.totalCost | currency  }}</div>
         <div [ngStyle]="{ 'color': 'green' }">Total quantity: {{ cartService.totalQuantity }}</div>
     </div>
     <ng-template #emptyBlock>

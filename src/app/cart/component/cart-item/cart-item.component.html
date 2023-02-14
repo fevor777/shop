@@ -1,4 +1,4 @@
-<span>{{ item.name }} X {{ item.count }}</span>
+<span>{{ item.name }}({{ item.price | currency }}) X {{ item.count }}</span>
 <span [ngClass]="['fa-solid', 'fa-square-plus', 'app-add-item']" (click)="onQuantityIncrease(item)"></span>
 <span [ngClass]="['fa-solid', 'fa-square-minus', 'app-minus-item']" (click)="onQuantityDecrease(item)"></span>
 <span [ngClass]="['fa-solid', 'fa-trash', 'app-trash']" (click)="onDeleteItem(item)"></span>
