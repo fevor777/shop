@@ -1,0 +1,7 @@
+<ng-container *ngIf="!loginService.isAuthorized(); else elseBlock">
+    <button (click)="logAsUser()">Login as User</button><br><br>
+    <button (click)="logAsAdmin()">Login as Admin</button>
+</ng-container>
+<ng-template #elseBlock>
+    <button (click)="logout()">Logout</button>
+</ng-template>

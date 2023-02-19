@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 
 import { Category } from '../../shared/model/category';
 import { ProductModel } from '../../shared/model/product.model';
@@ -7,7 +7,7 @@ import { ProductModel } from '../../shared/model/product.model';
 @Injectable({
   providedIn: 'root'
 })
-export class ProductsServiceService {
+export class ProductsService {
 
   getProducts(): Observable<ProductModel[]> {
     return of([
@@ -52,5 +52,11 @@ export class ProductsServiceService {
         isAvailable: true
       }
     ]);
+  }
+
+  getProduct(id: NonNullable<ProductModel['id']> | number): Observable<ProductModel | undefined> {
+    return this.getProducts().pipe(
+      map((products) => products.find((p) => p?.id === id))
+    )
   }
 }

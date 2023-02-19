@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 
+import { LoginService } from '../../../login/login.service';
 import { OrderByComponent } from '../../../shared/component/order-by.component';
 import { ProductModel } from '../../../shared/model/product.model';
 import { SelectOption } from '../../../shared/model/select-option';
 import { OrderByPipe } from '../../../shared/pipes/order-by.pipe';
 import { CartService } from '../../../shared/service/cart.service';
-import { ProductsServiceService } from '../../service/products-service.service';
+import { ProductsService } from '../../service/products.service';
 import { ProductComponent } from '../product/product.component';
 
 @Component({
@@ -16,7 +18,7 @@ import { ProductComponent } from '../product/product.component';
     styleUrls: ['./product-list.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [CommonModule, OrderByPipe, ProductComponent, OrderByComponent]
+    imports: [CommonModule, OrderByPipe, ProductComponent, OrderByComponent, RouterModule]
 })
 export class ProductListComponent {
 
@@ -34,8 +36,10 @@ export class ProductListComponent {
   sortOrder: boolean = true;
 
   constructor(
-    private productsServiceService: ProductsServiceService,
-    private cartService: CartService
+    private productsServiceService: ProductsService,
+    private cartService: CartService,
+    public loginService: LoginService,
+    private router: Router
     ) {
     this.products = this.productsServiceService.getProducts();
   }
@@ -50,6 +54,11 @@ export class ProductListComponent {
 
   onSortOrderChange(value: boolean): void {
     this.sortOrder = value;
+  }
+
+
+  onAdd(): void {
+    this.router.navigate(['admin/product/add']);
   }
 
 }

@@ -1,12 +1,11 @@
-import { importProvidersFrom } from '@angular/core';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
+import { provideRouter } from '@angular/router';
 
-import { APP_ROUTES } from './app/app-routing';
+import appRoutes from './app/app-routes';
 import { AppComponent } from './app/app.component';
 
-
 bootstrapApplication(AppComponent, {
-  providers: [importProvidersFrom(RouterModule.forRoot(APP_ROUTES)) ]
+  providers: [ provideRouter(appRoutes), { provide: LocationStrategy, useClass: HashLocationStrategy } ]
 })
   .catch(err => console.error(err));

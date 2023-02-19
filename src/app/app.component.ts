@@ -1,9 +1,7 @@
-import { AfterViewInit, Component, DEFAULT_CURRENCY_CODE, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DEFAULT_CURRENCY_CODE, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
-import { CartListComponent } from './cart/component/cart-list/cart-list.component';
-import { FirstComponent } from './first/first.component';
-import { OrderModule } from './order/order.module';
-import { ProductListComponent } from './product/component/product-list/product-list.component';
+import { NavMenuComponent } from './core/component/nav-menu/nav-menu.component';
 
 @Component({
   selector: 'app-root',
@@ -11,10 +9,8 @@ import { ProductListComponent } from './product/component/product-list/product-l
   styleUrls: ['./app.component.css'],
   standalone: true,
   imports: [
-    ProductListComponent,
-    OrderModule,
-    FirstComponent,
-    CartListComponent,
+    RouterModule,
+    NavMenuComponent,
   ],
   providers: [
     { provide: DEFAULT_CURRENCY_CODE, useValue: 'USD' }

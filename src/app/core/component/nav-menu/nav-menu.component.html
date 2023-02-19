@@ -1,0 +1,15 @@
+<nav class="navbar navbar-inverse h3">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+      <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }"><a routerLink="/products-list">Products</a></li>
+      <li routerLinkActive="active">
+        <a routerLink="/cart">
+          <span>Cart </span>
+          <span [style.color]="cartService.isEmptyCart() ? '' : 'red'">({{ cartService.totalQuantity }})</span>
+        </a>
+      </li>
+      <li routerLinkActive="active"><a routerLink="/login">Login</a></li>
+      <li routerLinkActive="active"><a routerLink="/admin">Admin</a></li>
+    </ul>
+  </div>
+</nav>

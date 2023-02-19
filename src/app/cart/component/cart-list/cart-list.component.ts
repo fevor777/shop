@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
+
 import { OrderByComponent } from '../../../shared/component/order-by.component';
-import { OrderByPipe } from '../../../shared/pipes/order-by.pipe';
-import { SharedModule } from '../../../shared/shared.module';
 import { CartProductModel } from '../../../shared/model/cart-product.model';
-import { CartService } from '../../../shared/service/cart.service';
-import { CartItemComponent } from '../cart-item/cart-item.component';
 import { SelectOption } from '../../../shared/model/select-option';
+import { OrderByPipe } from '../../../shared/pipes/order-by.pipe';
+import { CartService } from '../../../shared/service/cart.service';
+import { SharedModule } from '../../../shared/shared.module';
+import { CartItemComponent } from '../cart-item/cart-item.component';
 
 @Component({
   selector: 'app-cart-list',
@@ -15,7 +17,7 @@ import { SelectOption } from '../../../shared/model/select-option';
   styleUrls: ['./cart-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CartItemComponent, CommonModule, SharedModule, OrderByPipe, OrderByComponent]
+  imports: [CartItemComponent, CommonModule, SharedModule, OrderByPipe, OrderByComponent, RouterModule]
 })
 export class CartListComponent {
 

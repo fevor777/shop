@@ -1,8 +1,13 @@
 <div *ngIf="item" class="app-product">
     <div>name: {{ item.name }}</div>
-    <div>description: {{ item.description }}</div>
     <div>price: {{ item.price | currency }}</div>
-    <div>category: {{ item.category }}</div>
     <div>isAvailable: {{ item.isAvailable }}</div>
-    <button [disabled]="!item.isAvailable" (click)="onAddToCart(item)">Add to cart</button>
+    
+    <ng-container *ngIf="!isAdminTab">
+        <button [disabled]="!item.isAvailable" (click)="onAddToCart(item)">Add to cart</button>
+        <button (click)="onDetailsClick()">Details</button>
+    </ng-container>
+    <ng-container *ngIf="loginService.isAdmin() && isAdminTab">
+        <button (click)="onEdit(item.id)">Edit</button>
+    </ng-container>
 </div>
