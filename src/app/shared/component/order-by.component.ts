@@ -35,14 +35,19 @@ export class OrderByComponent implements OnChanges, OnDestroy {
             this.keysForView = [ ...this.keys ];
             this.appSettingsService.getAppSettings(this.persistenceKey)
                 .pipe(takeUntil(this.destroy))
-                .subscribe(settings => this.applyConfig(this.keysForView, settings));
+                .subscribe(settings => this.applyConfig(settings));
 
         }
     }
 
     onKeyChange(event: Event): void {
+        this.keysForView.forEach((k) => { 
+            if (k.selected) {
+                k.selected = false;
+            }
+        });
         const value = (event.target as HTMLSelectElement).value;
-        const option = this.keys?.find((k) => k?.id === value);
+        const option = this.keysForView?.find((k) => k?.id === value);
         if (option) {
             let settings;
             if (this.settings) {
@@ -76,15 +81,15 @@ export class OrderByComponent implements OnChanges, OnDestroy {
     this.destroy.unsubscribe();
   }
 
-  private applyConfig(options: SelectOption[], settings: AppSettings | null): void {
+  private applyConfig(settings: AppSettings | null): void {
     if (settings) {
-        this.keysForView = options.map(o => {
+        this.keysForView = this.keysForView.map(o => {
             return o.id === settings.key?.id ? { ...o, selected: true } : o;
         });
         this.ascendingValue = settings.isAscOrder ?? true;
         this.settings = { ...settings };
     } else {
-        this.settings = { key: options[0], isAscOrder: true };
+        this.settings = { key: this.keysForView[0], isAscOrder: true };
         this.appSettingsService.setAppSettings(this.settings, this.persistenceKey);
     }
   }

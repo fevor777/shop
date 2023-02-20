@@ -35,9 +35,9 @@ export class AppSettingsService {
     this.localStorageService.setItem(key, JSON.stringify(settings));
   }
 
-  private getAppSettingsFromLocalStorage(key: string): AppSettings {
+  private getAppSettingsFromLocalStorage(key: string): AppSettings | null {
     const settings = this.localStorageService.getItem(key);
-    return settings ?? JSON.parse(settings);
+    return settings ? JSON.parse(settings) : null;
   }
 
   private getAppSettingsFromFile(key: string): Observable<AppSettings> {

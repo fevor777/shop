@@ -11,8 +11,7 @@ export class LoginService {
 
     constructor(private router: Router) {}
 
-    loginStatus: LoginStatus = { authorized: true, userRole: UserRole.ADMIN };
-    // loginStatus: LoginStatus = { authorized: false, userRole: UserRole.USER };
+    loginStatus: LoginStatus = { authorized: false, userRole: UserRole.USER };
     redirectUrl: string = '';
 
     login(userRole: UserRole): void {
