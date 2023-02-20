@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 import { LoginService } from '../../../login/login.service';
 import { OrderByComponent } from '../../../shared/component/order-by.component';
@@ -9,7 +9,7 @@ import { ProductModel } from '../../../shared/model/product.model';
 import { SelectOption } from '../../../shared/model/select-option';
 import { OrderByPipe } from '../../../shared/pipes/order-by.pipe';
 import { CartService } from '../../../shared/service/cart.service';
-import { ProductsService } from '../../service/products.service';
+import { ProductsPromiseService } from '../../service/products-promise.service';
 import { ProductComponent } from '../product/product.component';
 
 @Component({
@@ -20,7 +20,9 @@ import { ProductComponent } from '../product/product.component';
     standalone: true,
     imports: [CommonModule, OrderByPipe, ProductComponent, OrderByComponent, RouterModule]
 })
-export class ProductListComponent {
+export class ProductListComponent implements OnDestroy {
+
+  private readonly destroy: Subject<void> = new Subject();
 
   readonly productModelKeys: SelectOption[] = [
     { id: 'name', name: 'Name'},
@@ -30,22 +32,24 @@ export class ProductListComponent {
     { id: 'isAvailable', name: 'Availability'},
   ];
 
-  products?: Observable<ProductModel[]>;
+  products?: Promise<ProductModel[]>;
 
   sortKey: string = this.productModelKeys[0].id;
   sortOrder: boolean = true;
 
   constructor(
-    private productsServiceService: ProductsService,
+    private productsPromiseService: ProductsPromiseService,
     private cartService: CartService,
     public loginService: LoginService,
     private router: Router
     ) {
-    this.products = this.productsServiceService.getProducts();
+    this.products = this.productsPromiseService.getList();
   }
 
   onAddToCart(product: ProductModel): void {
-    this.cartService.addProduct(product);
+    this.cartService.addProduct(product)
+      .pipe(takeUntil(this.destroy))
+      .subscribe();
   }
 
   onSortKeyChange(value: SelectOption): void {
@@ -59,6 +63,16 @@ export class ProductListComponent {
 
   onAdd(): void {
     this.router.navigate(['admin/product/add']);
+  }
+
+  onReload(): void {
+    this.products = this.productsPromiseService.getList();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+    this.destroy.unsubscribe();
   }
 
 }

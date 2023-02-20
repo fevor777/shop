@@ -4,11 +4,13 @@
 </ng-container>
 <app-order-by
     [keys]="productModelKeys"
+    [persistenceKey]="'productListPersistence'"
     (keyChange)="onSortKeyChange($event)"
     (sortOrderChange)="onSortOrderChange($event)">
 </app-order-by>
 <app-product 
     *ngFor="let product of products | async | orderByPipe: sortKey : sortOrder" 
     [item]="product"
-    (addProductToCart)="onAddToCart($event)">
+    (addProductToCart)="onAddToCart($event)"
+    (reload)="onReload()">
 </app-product>

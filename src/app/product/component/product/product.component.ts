@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { LoginService } from '../../../login/login.service';
 import { ProductModel } from '../../../shared/model/product.model';
+import { ProductsPromiseService } from '../../service/products-promise.service';
 
 @Component({
   selector: 'app-product',
@@ -17,9 +18,14 @@ export class ProductComponent {
 
   @Input() item!: ProductModel;
   @Output() addProductToCart: EventEmitter<ProductModel> = new EventEmitter();
+  @Output() reload: EventEmitter<void> = new EventEmitter();
   isAdminTab: boolean = false;
 
-  constructor(private router: Router, private route: ActivatedRoute, public loginService: LoginService) {
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute, 
+    public loginService: LoginService,
+    private productsPromiseService: ProductsPromiseService) {
     this.isAdminTab = this.router.url.includes('admin');
   }
 
@@ -38,4 +44,10 @@ export class ProductComponent {
   onEdit(id: number): void {
     this.router.navigate(['admin/product/edit', id]);
   }
+
+  onDelete(id: number): void {
+    this.productsPromiseService.delete(+id)
+      .then(() => this.reload.emit());
+  }
+
 }

@@ -1,0 +1,138 @@
+{
+  "products": [
+    {
+      "id": 1112,
+      "name": "A1 Product 21",
+      "description": "A1 description for Product 1",
+      "price": 500,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 1113,
+      "name": "X6 Product 13",
+      "description": "X6 description for Product 1",
+      "price": 10,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 1311,
+      "name": "W Product 41",
+      "description": "W description for Product 1",
+      "price": 500,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 1124,
+      "name": "GH Product 41",
+      "description": "C description for Product 1",
+      "price": 1500,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 1412,
+      "name": "X Product 21",
+      "description": "A description for Product 1",
+      "price": 800,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 1133,
+      "name": "GD Product 13",
+      "description": "A description for Product 1",
+      "price": 590,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 1371,
+      "name": "DC Product 41",
+      "description": "A description for Product 1",
+      "price": 100,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 1124,
+      "name": "ED Product 41",
+      "description": "A description for Product 1",
+      "price": 900,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 3112,
+      "name": "HY Product 41",
+      "description": "A description for Product 1",
+      "price": 234,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 1413,
+      "name": "CG Product 41",
+      "description": "A description for Product 1",
+      "price": 123,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 1351,
+      "name": "CA Product 41",
+      "description": "A description for Product 1",
+      "price": 500,
+      "category": "Category 1",
+      "isAvailable": true
+    },
+    {
+      "id": 1164,
+      "name": "DA Product 41",
+      "description": "A description for Product 1",
+      "price": 345,
+      "category": "Category 1",
+      "isAvailable": true
+    }
+  ],
+  "cart": [
+    {
+      "id": 1351,
+      "name": "CA Product 41",
+      "description": "A description for Product 1",
+      "price": 500,
+      "category": "Category 1",
+      "isAvailable": true,
+      "count": 1
+    },
+    {
+      "id": 1133,
+      "name": "GD Product 13",
+      "description": "A description for Product 1",
+      "price": 590,
+      "category": "Category 1",
+      "isAvailable": true,
+      "count": 1
+    },
+    {
+      "id": 1124,
+      "name": "GH Product 41",
+      "description": "C description for Product 1",
+      "price": 1500,
+      "category": "Category 1",
+      "isAvailable": true,
+      "count": 1
+    },
+    {
+      "id": 1112,
+      "name": "A1 Product 21",
+      "description": "A1 description for Product 1",
+      "price": 500,
+      "category": "Category 1",
+      "isAvailable": true,
+      "count": 5
+    }
+  ]
+}

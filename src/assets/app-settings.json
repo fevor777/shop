@@ -1,0 +1,16 @@
+{
+    "productListPersistence": {
+        "key": {
+            "id": "name",
+            "name": "Name"
+        },
+        "isAscOrder": true
+    },
+    "cartListPersistence": {
+        "key": {
+            "id": "price",
+            "name": "Price"
+        },
+        "isAscOrder": true
+    }
+}

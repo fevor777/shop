@@ -9,5 +9,6 @@
     </ng-container>
     <ng-container *ngIf="loginService.isAdmin() && isAdminTab">
         <button (click)="onEdit(item.id)">Edit</button>
+        <button (click)="onDelete(item.id)">Delete</button>
     </ng-container>
 </div>

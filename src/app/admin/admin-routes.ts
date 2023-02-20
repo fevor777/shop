@@ -4,10 +4,9 @@ import { AdminGuard } from '../core/guard/admin.guard';
 import { ProductViewResolver } from '../core/guard/prodect-view.resolver';
 import { ProcessOrderComponent } from '../order/process-order.component';
 import { ProductListComponent } from '../product/component/product-list/product-list.component';
-import { AddProductComponent } from './add-product/add-product.component';
 import { AdminComponent } from './admin.component';
 import { CanEditProductDeactivateGuard } from './can-edit-product-deactivate.guard';
-import { EditProductComponent } from './edit-product/edit-product.component';
+import { AddEditProductComponent } from './add-edit-product/add-edit-product.component';
 
 export default [
     {
@@ -24,7 +23,7 @@ export default [
                 children: [
                     {
                         path: 'add',
-                        component: AddProductComponent
+                        component: AddEditProductComponent
                     },
                     {
                         path: 'edit/:id',
@@ -32,7 +31,7 @@ export default [
                             product: ProductViewResolver
                         },
                         canDeactivate: [CanEditProductDeactivateGuard],
-                        component: EditProductComponent
+                        component: AddEditProductComponent
                     },
                 ]
             },

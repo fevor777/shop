@@ -1,117 +1,130 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { LocalStorageService } from '../../core/services/local-storage.service';
-import { CartProductModel } from '../model/cart-product.model';
+import { concatMap, forkJoin, Observable, of, switchMap, tap } from 'rxjs';
 
+import { CartProductModel } from '../model/cart-product.model';
 import { ProductModel } from '../model/product.model';
+import { CartObservableService } from './cart-observable.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CartService {
+  totalCost: number = 0;
+  totalQuantity: number = 0;
+  cartProductsLength: number = 0;
 
-  private readonly cartProductsSubject: BehaviorSubject<CartProductModel[]> = new BehaviorSubject<CartProductModel[]>([]);
-  readonly cartProducts: Observable<CartProductModel[]> =this.cartProductsSubject.asObservable();
+  constructor(private cartObservableService: CartObservableService) {}
 
-  constructor(private localStorageService: LocalStorageService) {
-    this.initCart();
+  getCartProducts(): Observable<CartProductModel[]> {
+    return (
+      this.cartObservableService.getList() as Observable<CartProductModel[]>
+    ).pipe(tap((items) => this.updateInfo(items)));
   }
 
-  get totalCost(): number {
-    let result = 0;
-    const products = this.getCartProducts();
-    if (Array.isArray(products) && products.length > 0) {
-      result = products.map(p => p.count * p.price).reduce((r, c) => r + c);
-    }
-    return result;
+  updateCartProduct(product: CartProductModel): Observable<CartProductModel> {
+    return this.cartObservableService.update(product);
   }
 
-  get totalQuantity(): number {
-    let result = 0;
-    const products = this.getCartProducts();
-    if (Array.isArray(products) && products.length > 0) {
-      result = products.map(p => p.count).reduce((r, c) => r + c);
-    } 
-    return result;
-  }
-
-  getCartProducts(): CartProductModel[] {
-    return this.cartProductsSubject.getValue();
-  }
-
-  setCartProducts(products: CartProductModel[]): void {
-    this.localStorageService.setItem('cartProduct', JSON.stringify(products));
-    this.cartProductsSubject.next(products);
-  }
-
-  addProduct(product: ProductModel): void {
-    if (product) {
-      const products = this.getCartProducts();
-      const newCartProduct = { ...product, count: 1};
-      if (Array.isArray(products) && products.length > 0) {
-        const cartProduct = products.find((p) => p.id === product.id);
-        if (cartProduct) {
-          this.quantityIncrease(product);
+  addProduct(product: ProductModel): Observable<CartProductModel[]> {
+    return (
+      this.cartObservableService.getList() as Observable<CartProductModel[]>
+    ).pipe(
+      concatMap((products) => {
+        let obs;
+        if (Array.isArray(products) && products.length > 0) {
+          const cartProduct = products.find((p) => p.id === product.id);
+          if (cartProduct) {
+            obs = this.quantityIncrease(cartProduct);
+          } else {
+            obs = this.cartObservableService.create({ ...product, count: 1 });
+          }
         } else {
-          const updatedProducts = [ ...products, newCartProduct];
-          this.setCartProducts(updatedProducts);
+          obs = this.cartObservableService.create({ ...product, count: 1 });
         }
-      } else {
-        this.setCartProducts([newCartProduct]);
-      }
-    }
+        return obs;
+      }),
+      concatMap(() => this.getCartProducts())
+    );
   }
 
-  quantityIncrease(product: ProductModel): void {
-    this.changeQuantity(product, 1);
+  quantityIncrease(product: CartProductModel): Observable<CartProductModel[]> {
+    return this.changeQuantity(product, 1);
   }
 
-  quantityDecrease(product: ProductModel): void {
-    this.changeQuantity(product, -1);
+  quantityDecrease(product: CartProductModel): Observable<CartProductModel[]> {
+    return this.changeQuantity(product, -1);
   }
 
-  removeProduct(product: ProductModel): void {
-    const products = this.getCartProducts();
-    if (product && Array.isArray(products)) {
-      const updatedProducts = products.filter((p) => p.id !== product.id);
-      this.setCartProducts(updatedProducts);
-    }
+  removeProduct(id: number): Observable<CartProductModel[]> {
+    return this.cartObservableService.delete(id)
+      .pipe(concatMap(() => this.getCartProducts()));
   }
 
-  removeAllProducts(): void {
-    this.setCartProducts([]);
+  removeAllProducts(): Observable<CartProductModel[]> {
+    return (
+      this.cartObservableService.getList() as Observable<CartProductModel[]>
+    ).pipe(
+      switchMap((products) => {
+        let obs = [of({} as CartProductModel)];
+        if (Array.isArray(products) && products.length > 0) {
+          obs = products.map((p) => this.cartObservableService.delete(p.id));
+        }
+        return forkJoin(obs);
+      }),
+      concatMap(() => this.getCartProducts())
+    );
   }
 
   isEmptyCart(): boolean {
-    return this.getCartProducts()?.length === 0; 
+    return this.cartProductsLength === 0;
   }
 
-  private changeQuantity(product: ProductModel, count: number): void {
-    const products = this.getCartProducts();
-    if (product && Array.isArray(products)) {
-      let updatedProducts = [ ...products];
-      const index = updatedProducts.findIndex((p) => p.id === product.id);
-      if (index !== -1) {
-        const p = updatedProducts[index];
-        updatedProducts[index] = { ...p, count: p.count + count };
-        if (updatedProducts[index].count === 0) {
-          this.removeProduct(product);
-        } else {
-          this.setCartProducts(updatedProducts);
-        }
-      }
+  updateInfo(cartProduct: CartProductModel[]): void {
+    this.updateTotalCost(cartProduct);
+    this.updateTotalQuantity(cartProduct);
+    this.updateCartProductsLength(cartProduct);
+  }
+
+  private changeQuantity(
+    product: CartProductModel,
+    count: number
+  ): Observable<CartProductModel[]> {
+    const newCount = product.count + count;
+    if (newCount <= 0) {
+      return this.removeProduct(product.id)
+        .pipe(concatMap(() => this.getCartProducts()));;
+    } else {
+      return this.updateCartProduct({
+        ...product,
+        count: newCount,
+      } as CartProductModel)
+        .pipe(concatMap(() => this.getCartProducts()));;
     }
   }
 
-  private initCart(): void {
-    const productsJson = this.localStorageService.getItem('cartProduct');
-    if (productsJson) {
-      try {
-        const products = JSON.parse(productsJson);
-        this.setCartProducts(products);
-      } catch (er) {
-        console.log(er);
-      }
+  private updateTotalCost(cartProduct: CartProductModel[]) {
+    let result = 0;
+    if (Array.isArray(cartProduct) && cartProduct.length > 0) {
+      result = cartProduct
+        .map((p) => p.count * p.price)
+        .reduce((r, c) => r + c);
     }
+    this.totalCost = result;
+  }
+
+  private updateTotalQuantity(cartProduct: CartProductModel[]) {
+    let result = 0;
+    if (Array.isArray(cartProduct) && cartProduct.length > 0) {
+      result = cartProduct.map((p) => p.count).reduce((r, c) => r + c);
+    }
+    this.totalQuantity = result;
+  }
+
+  private updateCartProductsLength(cartProduct: CartProductModel[]) {
+    let result = 0;
+    if (Array.isArray(cartProduct)) {
+      result = cartProduct.length;
+    }
+    this.cartProductsLength = result;
   }
 }

@@ -1,7 +1,7 @@
 <div class="app-order-by">
     <span>Sorting: </span>
     <select (change)="onKeyChange($event)">
-        <option *ngFor="let key of keys" [value]="key.id" [label]="key.name"></option>
+        <option *ngFor="let key of keysForView" [value]="key.id" [label]="key.name" [selected]="key.selected"></option>
     </select>
-    <input type="checkbox" checked (change)="onSortOrderChange($event)"/><span>ascending</span>
+    <input type="checkbox" [checked]="ascendingValue" (change)="onSortOrderChange($event)"/><span>ascending</span>
 </div>

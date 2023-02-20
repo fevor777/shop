@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { CanDeactivate, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { EditProductComponent } from './edit-product/edit-product.component';
+import { AddEditProductComponent } from './add-edit-product/add-edit-product.component';
 
 @Injectable({
     providedIn: 'root'
   })
-  export class CanEditProductDeactivateGuard implements CanDeactivate<EditProductComponent> {
+  export class CanEditProductDeactivateGuard implements CanDeactivate<AddEditProductComponent> {
 
-    canDeactivate(component: EditProductComponent):
+    canDeactivate(component: AddEditProductComponent):
       | Observable<boolean | UrlTree>
       | Promise<boolean | UrlTree>
       | boolean

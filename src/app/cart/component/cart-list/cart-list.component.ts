@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 import { OrderByComponent } from '../../../shared/component/order-by.component';
 import { CartProductModel } from '../../../shared/model/cart-product.model';
@@ -15,41 +15,59 @@ import { CartItemComponent } from '../cart-item/cart-item.component';
   selector: 'app-cart-list',
   templateUrl: './cart-list.component.html',
   styleUrls: ['./cart-list.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CartItemComponent, CommonModule, SharedModule, OrderByPipe, OrderByComponent, RouterModule]
+  imports: [
+    CartItemComponent,
+    CommonModule,
+    SharedModule,
+    OrderByPipe,
+    OrderByComponent,
+    RouterModule,
+  ],
 })
-export class CartListComponent {
+export class CartListComponent implements OnDestroy, OnInit {
+  cartProducts: CartProductModel[] = [];
 
-  readonly cartProducts!: Observable<CartProductModel[]>;
+  private readonly destroy: Subject<void> = new Subject();
 
   readonly cartProductModelKeys: SelectOption[] = [
-    { id: 'name', name: 'Name'},
-    { id: 'count', name: 'Count'},
-    { id: 'price', name: 'Price'},
+    { id: 'name', name: 'Name' },
+    { id: 'count', name: 'Count' },
+    { id: 'price', name: 'Price' },
   ];
 
   sortKey: string = this.cartProductModelKeys[0].id;
   sortOrder: boolean = true;
 
-  constructor(public cartService: CartService) {
-    this.cartProducts = this.cartService.cartProducts;
+  constructor(public cartService: CartService) {}
+
+  ngOnInit(): void {
+    this.loadCartProducts();
   }
 
-  trackByItems(index: number, item: CartProductModel): number { 
-    return item.id; 
+  trackByItems(index: number, item: CartProductModel): number {
+    return item.id;
   }
 
   onQuantityIncrease(item: CartProductModel): void {
-    this.cartService.quantityIncrease(item);
+    this.cartService
+      .quantityIncrease(item)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((p) => this.updateCartProducts(p));
   }
 
   onQuantityDecrease(item: CartProductModel): void {
-    this.cartService.quantityDecrease(item);
+    this.cartService
+      .quantityDecrease(item)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((p) => this.updateCartProducts(p));
   }
 
   onDeleteItem(item: CartProductModel): void {
-    this.cartService.removeProduct(item);
+    this.cartService
+      .removeProduct(item.id)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((p) => this.updateCartProducts(p));
   }
 
   onSortKeyChange(value: SelectOption): void {
@@ -60,4 +78,27 @@ export class CartListComponent {
     this.sortOrder = value;
   }
 
+  onDeleteAll(): void {
+    this.cartService
+      .removeAllProducts()
+      .pipe(takeUntil(this.destroy))
+      .subscribe((p) => this.updateCartProducts(p));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+    this.destroy.unsubscribe();
+  }
+
+  private loadCartProducts(): void {
+    this.cartService
+      .getCartProducts()
+      .pipe(takeUntil(this.destroy))
+      .subscribe((p) => (this.cartProducts = p));
+  }
+
+  private updateCartProducts(cart: CartProductModel[]): void {
+    this.cartProducts = [ ...cart ];
+  }
 }
