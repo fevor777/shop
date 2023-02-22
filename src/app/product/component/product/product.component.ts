@@ -22,8 +22,8 @@ export class ProductComponent {
   isAdminTab: boolean = false;
 
   constructor(
-    private router: Router, 
-    private route: ActivatedRoute, 
+    private router: Router,
+    private route: ActivatedRoute,
     public loginService: LoginService,
     private productsPromiseService: ProductsPromiseService) {
     this.isAdminTab = this.router.url.includes('admin');
@@ -36,8 +36,9 @@ export class ProductComponent {
     }
   }
 
+  // я бы не делал тут навигацию, а генерил аутпут, тогда можно убрать две зависимости на router, route
   onDetailsClick(): void {
-    this.router.navigate(['product', this.item?.id], { relativeTo: this.route }); 
+    this.router.navigate(['product', this.item?.id], { relativeTo: this.route });
   }
 
 
