@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
 import { LoginService } from '../../../login/login.service';
@@ -23,6 +23,8 @@ import { ProductComponent } from '../product/product.component';
 export class ProductListComponent implements OnDestroy {
 
   private readonly destroy: Subject<void> = new Subject();
+  
+  isAdminTab: boolean = false;
 
   readonly productModelKeys: SelectOption[] = [
     { id: 'name', name: 'Name'},
@@ -41,9 +43,11 @@ export class ProductListComponent implements OnDestroy {
     private productsPromiseService: ProductsPromiseService,
     private cartService: CartService,
     public loginService: LoginService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute, 
     ) {
     this.products = this.productsPromiseService.getList();
+    this.isAdminTab = this.router.url.includes('admin');
   }
 
   onAddToCart(product: ProductModel): void {
@@ -67,6 +71,15 @@ export class ProductListComponent implements OnDestroy {
 
   onReload(): void {
     this.products = this.productsPromiseService.getList();
+  }
+
+  onDetailsClick(id: number): void {
+    this.router.navigate(['product', id], { relativeTo: this.route });
+  }
+
+
+  onEditClick(id: number): void {
+    this.router.navigate(['admin/product/edit', id]);
   }
 
   ngOnDestroy(): void {

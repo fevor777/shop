@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
 import { LoginService } from '../../../login/login.service';
 import { ProductModel } from '../../../shared/model/product.model';
@@ -17,16 +16,16 @@ import { ProductsPromiseService } from '../../service/products-promise.service';
 export class ProductComponent {
 
   @Input() item!: ProductModel;
+  @Input() isAdminTab: boolean = false;
+
   @Output() addProductToCart: EventEmitter<ProductModel> = new EventEmitter();
   @Output() reload: EventEmitter<void> = new EventEmitter();
-  isAdminTab: boolean = false;
+  @Output() detailsClick: EventEmitter<number> = new EventEmitter();
+  @Output() editClick: EventEmitter<number> = new EventEmitter();
 
   constructor(
-    private router: Router, 
-    private route: ActivatedRoute, 
     public loginService: LoginService,
     private productsPromiseService: ProductsPromiseService) {
-    this.isAdminTab = this.router.url.includes('admin');
   }
 
 
@@ -37,12 +36,12 @@ export class ProductComponent {
   }
 
   onDetailsClick(): void {
-    this.router.navigate(['product', this.item?.id], { relativeTo: this.route }); 
+    this.detailsClick.emit(this.item?.id);
   }
 
 
   onEdit(id: number): void {
-    this.router.navigate(['admin/product/edit', id]);
+    this.editClick.emit(id);
   }
 
   onDelete(id: number): void {

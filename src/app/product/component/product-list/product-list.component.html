@@ -11,6 +11,9 @@
 <app-product 
     *ngFor="let product of products | async | orderByPipe: sortKey : sortOrder" 
     [item]="product"
+    [isAdminTab]="isAdminTab"
     (addProductToCart)="onAddToCart($event)"
+    (detailsClick)="onDetailsClick($event)"
+    (editClick)="onEditClick($event)"
     (reload)="onReload()">
 </app-product>
