@@ -1,22 +1,25 @@
 import { Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
-import { Store } from '@ngrx/store';
+import { EntityCollectionService, EntityServices } from '@ngrx/data';
 import { catchError, filter, Observable, of, take, tap } from 'rxjs';
 
-import { selectProductsLoaded } from '../@ngrx';
-import * as ProductsActions from '../@ngrx/products/products.actions';
+import { ProductModel } from '../../shared/model/product.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductsStatePreloadingGuard implements CanActivate {
-  constructor(private store: Store) {}
+
+  private productService!: EntityCollectionService<ProductModel>;
+  constructor(entityServices: EntityServices) {
+    this.productService = entityServices.getEntityCollectionService('Product');
+  }
 
   canActivate(): Observable<boolean> {
-    return this.store.select(selectProductsLoaded).pipe(
+    return this.productService.loaded$.pipe(
       tap((loaded: boolean) => {
         if (!loaded) {
-          this.store.dispatch(ProductsActions.getProducts());
+          this.productService.getAll();
         }
       }),
       filter((loaded: boolean) => loaded),

@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { map, Observable, take, tap } from 'rxjs';
 
 import { ProductModel } from '../../shared/model/product.model';
-import { selectSelectedProductByUrl } from '../@ngrx';
+import { selectSelectedProductByUrl } from '../@ngrx/data/entity-store';
 import * as RouterActions from '../@ngrx/router/router.actions';
 
 @Injectable({

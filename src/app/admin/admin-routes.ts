@@ -1,9 +1,5 @@
-import { importProvidersFrom } from '@angular/core';
 import { Routes } from '@angular/router';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
 
-import { ProductsEffects, productsFeatureKey, productsReducer } from '../core/@ngrx';
 import { AdminGuard } from '../core/guard/admin.guard';
 import { IsCartEmptyGuard } from '../core/guard/is-cart-empty.guard';
 import { ProductExistsGuard } from '../core/guard/prodect-existing.guard';
@@ -19,12 +15,6 @@ export default [
         path: '',
         component: AdminComponent,
         canActivate: [AdminGuard],
-        providers: [
-            importProvidersFrom(
-                StoreModule.forFeature(productsFeatureKey, productsReducer),
-                EffectsModule.forFeature([ProductsEffects])
-            )
-        ],
         children: [
             {
                 path: 'products',

@@ -3,6 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
+import { DefaultDataServiceConfig, EntityDataModule } from '@ngrx/data';
 import { EffectsModule } from '@ngrx/effects';
 import { RouterState, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
@@ -10,7 +11,15 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import appRoutes from './app/app-routes';
 import { AppComponent } from './app/app.component';
-import { CartProductsEffects, cartProductsFeatureKey, cartProductsReducer, CustomSerializer, RouterEffects, routerReducers } from './app/core/@ngrx';
+import {
+  CartProductsEffects,
+  cartProductsFeatureKey,
+  cartProductsReducer,
+  CustomSerializer,
+  RouterEffects,
+  routerReducers,
+} from './app/core/@ngrx';
+import { defaultDataServiceConfig, entityMetadata, pluralNames } from './app/core/@ngrx/data/entity-store';
 import { metaReducers } from './app/core/@ngrx/meta-reducers';
 import { carInitializerProvider } from './app/core/guard/cart.initializer';
 import { headerInterceptorProvider } from './app/core/interceptor/header.interceptor';
@@ -50,7 +59,9 @@ bootstrapApplication(AppComponent, {
         : [],
       EffectsModule.forRoot([RouterEffects, CartProductsEffects]),
       StoreModule.forFeature(cartProductsFeatureKey, cartProductsReducer),
+      EntityDataModule.forRoot({ entityMetadata, pluralNames }),
     ),
+    { provide: DefaultDataServiceConfig, useValue: defaultDataServiceConfig },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     headerInterceptorProvider,
     timingInterceptorProvider,

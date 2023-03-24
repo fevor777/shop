@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
-import { selectSelectedProductByUrl } from '../../../core/@ngrx';
+import { selectSelectedProductByUrl } from '../../../core/@ngrx/data/entity-store';
 import { ProductModel } from '../../../shared/model/product.model';
 
 @Component({

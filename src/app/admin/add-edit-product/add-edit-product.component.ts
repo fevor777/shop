@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule, UrlTree } from '@angular/router';
+import { EntityCollectionService, EntityServices } from '@ngrx/data';
 import { Store } from '@ngrx/store';
 import { Observable, take } from 'rxjs';
 
-import { selectSelectedProductByUrl } from '../../core/@ngrx';
-import * as ProductsActions from '../../core/@ngrx/products/products.actions';
+import { selectSelectedProductByUrl } from '../../core/@ngrx/data/entity-store';
 import { ProductModel } from '../../shared/model/product.model';
 import * as RouterActions from './../../core/@ngrx/router/router.actions';
 
@@ -25,7 +25,12 @@ export class AddEditProductComponent implements OnInit {
 
   private originalProduct: ProductModel = {} as ProductModel;
   private isSaved: boolean = false;
-  constructor(private store: Store) {}
+  
+  private productService!: EntityCollectionService<ProductModel>;
+
+  constructor(private store: Store, entityServices: EntityServices) {
+    this.productService = entityServices.getEntityCollectionService('Product');
+  }
 
   ngOnInit(): void {
     this.store
@@ -45,10 +50,11 @@ export class AddEditProductComponent implements OnInit {
     this.isSaved = true;
     const product = { ...this.product } as ProductModel;
     if (this.product.id) {
-      this.store.dispatch(ProductsActions.updateProduct({ product }));
+      this.productService.update(product);
     } else {
-      this.store.dispatch(ProductsActions.createProduct({ product }));
+      this.productService.add(product);
     }
+    this.onBack();
   }
 
   canDeactivate():
