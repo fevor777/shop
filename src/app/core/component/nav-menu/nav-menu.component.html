@@ -5,7 +5,7 @@
       <li routerLinkActive="active">
         <a routerLink="/cart">
           <span>Cart </span>
-          <span [style.color]="(isEmptyCart$ | async) ? 'red' : ''">({{ totalQuantity$ | async }})</span>
+          <span [style.color]="(isNotEmptyCart$ | async) ? 'red' : ''">({{ totalQuantity$ | async }})</span>
         </a>
       </li>
       <li routerLinkActive="active"><a routerLink="/login">Login</a></li>

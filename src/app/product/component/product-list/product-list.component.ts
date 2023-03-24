@@ -5,13 +5,12 @@ import { EntityCollectionService, EntityServices } from '@ngrx/data';
 import { Store } from '@ngrx/store';
 import { map, Observable } from 'rxjs';
 
-import { selectUrl } from '../../../core/@ngrx';
+import { CartProductsFacade, selectUrl } from '../../../core/@ngrx';
 import { OrderByComponent } from '../../../shared/component/order-by.component';
 import { ProductModel } from '../../../shared/model/product.model';
 import { SelectOption } from '../../../shared/model/select-option';
 import { OrderByPipe } from '../../../shared/pipes/order-by.pipe';
 import { ProductComponent } from '../product/product.component';
-import * as CartProductsActions from './../../../core/@ngrx/cart/cart-products.actions';
 import * as RouterActions from './../../../core/@ngrx/router/router.actions';
 
 @Component({
@@ -47,7 +46,7 @@ export class ProductListComponent implements OnInit {
 
   private productService!: EntityCollectionService<ProductModel>;
 
-  constructor(private store: Store, entityServices: EntityServices) {
+  constructor(private store: Store, entityServices: EntityServices, private cartProductsFacade: CartProductsFacade) {
     this.productService = entityServices.getEntityCollectionService('Product');
   }
 
@@ -62,7 +61,7 @@ export class ProductListComponent implements OnInit {
   }
 
   onAddToCart(product: ProductModel): void {
-    this.store.dispatch(CartProductsActions.addProductToCart({ product }));
+    this.cartProductsFacade.addProductToCart({ product });
   }
 
   onDeleteClick(id: number) {

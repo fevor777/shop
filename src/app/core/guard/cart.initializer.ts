@@ -1,16 +1,14 @@
 import { APP_INITIALIZER, Provider } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { catchError, filter, Observable, of, take, tap } from 'rxjs';
 
-import { selectCartProductsLoaded } from '../@ngrx';
-import * as CartProductsActions from '../@ngrx/cart/cart-products.actions';
+import { CartProductsFacade } from '../@ngrx';
 
-export function initializeCartFactory(store: Store): () => Observable<any> {
+export function initializeCartFactory(cartProductsFacade: CartProductsFacade): () => Observable<any> {
   return () => {
-    return store.select(selectCartProductsLoaded).pipe(
+    return cartProductsFacade.cartProductsLoaded$.pipe(
       tap((loaded: boolean) => {
         if (!loaded) {
-          store.dispatch(CartProductsActions.getCartProducts());
+          cartProductsFacade.getCartProducts();
         }
       }),
       filter((loaded: boolean) => loaded),
@@ -23,6 +21,6 @@ export function initializeCartFactory(store: Store): () => Observable<any> {
 export const carInitializerProvider: Provider = {
   provide: APP_INITIALIZER,
   useFactory: initializeCartFactory,
-  deps: [Store],
+  deps: [CartProductsFacade],
   multi: true,
 };

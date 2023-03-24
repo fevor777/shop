@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
-import { selectCartProductsExisting, selectCartProductsTotalQuantity } from '../../@ngrx';
+import { CartProductsFacade } from '../../@ngrx';
 
 @Component({
   selector: 'app-nav-menu',
@@ -14,14 +13,14 @@ import { selectCartProductsExisting, selectCartProductsTotalQuantity } from '../
 })
 export class NavMenuComponent implements OnInit {
 
-  isEmptyCart$!: Observable<boolean>;
+  isNotEmptyCart$!: Observable<boolean>;
   totalQuantity$!: Observable<number>;
 
-  constructor(private store: Store) {}
+  constructor(private cartProductsFacade: CartProductsFacade) {}
 
   ngOnInit(): void {
-    this.isEmptyCart$ = this.store.select(selectCartProductsExisting);
-    this.totalQuantity$ = this.store.select(selectCartProductsTotalQuantity);
+    this.isNotEmptyCart$ = this.cartProductsFacade.cartProductsExisting$;
+    this.totalQuantity$ = this.cartProductsFacade.cartProductsTotalQuantity$;
   }
 
 }

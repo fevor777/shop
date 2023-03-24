@@ -1,11 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
-import { selectCartProductsData, selectCartProductsTotalCost, selectCartProductsTotalQuantity } from '../../../core/@ngrx';
-import * as CartProductsActions from '../../../core/@ngrx';
+import { CartProductsFacade } from '../../../core/@ngrx';
 import { OrderByComponent } from '../../../shared/component/order-by.component';
 import { CartProductModel } from '../../../shared/model/cart-product.model';
 import { SelectOption } from '../../../shared/model/select-option';
@@ -41,12 +39,12 @@ export class CartListComponent implements OnInit {
   sortKey: string = this.cartProductModelKeys[0].id;
   sortOrder: boolean = true;
 
-  constructor(private store: Store) {}
+  constructor(private cartProductsFacade: CartProductsFacade) {}
 
   ngOnInit(): void {
-    this.cartProducts$ = this.store.select(selectCartProductsData);
-    this.totalCost$ = this.store.select(selectCartProductsTotalCost);
-    this.totalQuantity$ = this.store.select(selectCartProductsTotalQuantity);
+    this.cartProducts$ = this.cartProductsFacade.cartProducts$;
+    this.totalCost$ = this.cartProductsFacade.cartProductsTotalCost$;
+    this.totalQuantity$ = this.cartProductsFacade.cartProductsTotalQuantity$;
   }
 
   trackByItems(index: number, item: CartProductModel): number {
@@ -54,15 +52,15 @@ export class CartListComponent implements OnInit {
   }
 
   onQuantityIncrease(item: CartProductModel): void {
-    this.store.dispatch(CartProductsActions.increaseCartProductQuantity({ cartProduct: item }));
+    this.cartProductsFacade.increaseCartProductQuantity({ cartProduct: item });
   }
 
   onQuantityDecrease(item: CartProductModel): void {
-    this.store.dispatch(CartProductsActions.decreaseCartProductQuantity({ cartProduct: item }));
+    this.cartProductsFacade.decreaseCartProductQuantity({ cartProduct: item });
   }
 
   onDeleteItem(item: CartProductModel): void {
-    this.store.dispatch(CartProductsActions.deleteCartProduct({ id: item.id }));
+    this.cartProductsFacade.deleteCartProduct({ id: item.id });
   }
 
   onSortKeyChange(value: SelectOption): void {
@@ -74,6 +72,6 @@ export class CartListComponent implements OnInit {
   }
 
   onDeleteAll(): void {
-    this.store.dispatch(CartProductsActions.deleteAllCartProducts());
+    this.cartProductsFacade.deleteAllCartProduct();
   }
 }
