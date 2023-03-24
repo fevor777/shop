@@ -9,7 +9,7 @@ export class OrderByPipe<T> implements PipeTransform {
         if (!value || value.length === 0 || !key) {
             return value;
         }
-        return value.sort((firstObj: T, secondObj: T) => {
+        return value.map(v => ({...v})).sort((firstObj: T, secondObj: T) => {
             const firstField = firstObj[key];
             const secondField = secondObj[key];
             let result;

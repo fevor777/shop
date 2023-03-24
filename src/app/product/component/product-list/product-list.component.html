@@ -1,5 +1,6 @@
+<p *ngIf="(error$ | async) as value">{{value}}</p>
 <router-outlet></router-outlet>
-<ng-container *ngIf="loginService.isAdmin()">
+<ng-container *ngIf="isAdminTab$ | async">
     <button (click)="onAdd()">Add</button>
 </ng-container>
 <app-order-by
@@ -9,11 +10,11 @@
     (sortOrderChange)="onSortOrderChange($event)">
 </app-order-by>
 <app-product 
-    *ngFor="let product of products | async | orderByPipe: sortKey : sortOrder" 
+    *ngFor="let product of  (products$ | async) | orderByPipe: sortKey : sortOrder" 
     [item]="product"
-    [isAdminTab]="isAdminTab"
+    [isAdminTab]="isAdminTab$ | async"
     (addProductToCart)="onAddToCart($event)"
     (detailsClick)="onDetailsClick($event)"
     (editClick)="onEditClick($event)"
-    (reload)="onReload()">
+    (deleteClick)="onDeleteClick($event)">
 </app-product>

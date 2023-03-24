@@ -1,23 +1,30 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
-import { CartService } from '../../shared/service/cart.service';
+import { Store } from '@ngrx/store';
+import { Observable, tap } from 'rxjs';
+
+import { selectCartProductsExisting } from '../@ngrx';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class IsCartEmptyGuard implements CanActivate {
-
-  constructor(private cartService: CartService) {}
+  constructor(private store: Store) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const isEmptyCart = this.cartService.isEmptyCart();
-    if (isEmptyCart) {
-      alert('Your cart is empty!')
-    }
-    return !isEmptyCart;
+    state: RouterStateSnapshot
+  ):
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree>
+    | boolean
+    | UrlTree {
+    return this.store.select(selectCartProductsExisting).pipe(
+      tap((value) => {
+        if (!value) {
+          alert('Your cart is empty!');
+        }
+      })
+    );
   }
-  
 }

@@ -1,4 +1,6 @@
-<span>Name:</span>
-<input  [(ngModel)]="product.name"/><br>
-<button (click)="onBack()">Back</button>
-<button (click)="onSave()">Save</button>
+<form #form="ngForm">
+  <span>Name:</span>
+  <input name="productName" [(ngModel)]="product.name" /><br />
+  <button (click)="onBack()">Back</button>
+  <button (click)="onSave()">Save</button>
+</form>

@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
+import { selectSelectedProductByUrl } from '../../../core/@ngrx';
 import { ProductModel } from '../../../shared/model/product.model';
 
 @Component({
@@ -14,12 +15,12 @@ import { ProductModel } from '../../../shared/model/product.model';
 })
 export class ProductViewComponent implements OnInit {
 
-  productObs?: Observable<ProductModel>;
+  product$?: Observable<ProductModel>;
 
-  constructor(private activatedRoute: ActivatedRoute) {}
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.productObs = this.activatedRoute.data.pipe(map(data => data['product'] as ProductModel));
+    this.product$ = this.store.select(selectSelectedProductByUrl);
   }
 
 }

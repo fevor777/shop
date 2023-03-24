@@ -14,10 +14,6 @@ import { AddEditProductComponent } from './add-edit-product/add-edit-product.com
       | Promise<boolean | UrlTree>
       | boolean
       | UrlTree {
-        const canDeactivate = component.canDeactivate();
-        if (!canDeactivate) {
-          alert('You have not saved this product');
-        }
-      return canDeactivate;
+      return component.canDeactivate();
     }
   }

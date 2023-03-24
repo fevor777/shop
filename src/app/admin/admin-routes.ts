@@ -1,35 +1,48 @@
+import { importProvidersFrom } from '@angular/core';
 import { Routes } from '@angular/router';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
 
+import { ProductsEffects, productsFeatureKey, productsReducer } from '../core/@ngrx';
 import { AdminGuard } from '../core/guard/admin.guard';
-import { ProductViewResolver } from '../core/guard/prodect-view.resolver';
+import { IsCartEmptyGuard } from '../core/guard/is-cart-empty.guard';
+import { ProductExistsGuard } from '../core/guard/prodect-existing.guard';
+import { ProductsStatePreloadingGuard } from '../core/guard/product-state-preloading.guard';
 import { ProcessOrderComponent } from '../order/process-order.component';
 import { ProductListComponent } from '../product/component/product-list/product-list.component';
+import { AddEditProductComponent } from './add-edit-product/add-edit-product.component';
 import { AdminComponent } from './admin.component';
 import { CanEditProductDeactivateGuard } from './can-edit-product-deactivate.guard';
-import { AddEditProductComponent } from './add-edit-product/add-edit-product.component';
 
 export default [
     {
         path: '',
         component: AdminComponent,
         canActivate: [AdminGuard],
+        providers: [
+            importProvidersFrom(
+                StoreModule.forFeature(productsFeatureKey, productsReducer),
+                EffectsModule.forFeature([ProductsEffects])
+            )
+        ],
         children: [
             {
                 path: 'products',
-                component: ProductListComponent
+                component: ProductListComponent,
+                canActivate: [ProductsStatePreloadingGuard],
             },
             {
                 path: 'product',
+                canActivate: [ProductsStatePreloadingGuard],
                 children: [
                     {
                         path: 'add',
-                        component: AddEditProductComponent
+                        component: AddEditProductComponent,
+                        canDeactivate: [CanEditProductDeactivateGuard],
                     },
                     {
                         path: 'edit/:id',
-                        resolve: {
-                            product: ProductViewResolver
-                        },
+                        canActivate: [ProductExistsGuard],
                         canDeactivate: [CanEditProductDeactivateGuard],
                         component: AddEditProductComponent
                     },
@@ -37,6 +50,7 @@ export default [
             },
             {
                 path: 'orders',
+                canActivate: [IsCartEmptyGuard],
                 component: ProcessOrderComponent
             },
             {

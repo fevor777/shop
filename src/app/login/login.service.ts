@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 
 import { UserRole } from '../first/user-role';
+import * as RouterActions from './../core/@ngrx/router/router.actions';
 import { LoginStatus } from './login-status';
 
 @Injectable({
@@ -9,7 +10,7 @@ import { LoginStatus } from './login-status';
 })
 export class LoginService {
 
-    constructor(private router: Router) {}
+    constructor(private store: Store) {}
 
     loginStatus: LoginStatus = { authorized: false, userRole: UserRole.USER };
     redirectUrl: string = '';
@@ -19,7 +20,7 @@ export class LoginService {
            this.loginStatus.authorized = true;
            this.loginStatus.userRole = userRole;
            if (this.redirectUrl) {
-                this.router.navigate([this.redirectUrl]);
+                this.store.dispatch(RouterActions.go({ path: [this.redirectUrl] }));
                 this.redirectUrl = '';
            }
         }

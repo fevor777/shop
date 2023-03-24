@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { LoginService } from '../../../login/login.service';
 import { ProductModel } from '../../../shared/model/product.model';
-import { ProductsPromiseService } from '../../service/products-promise.service';
 
 @Component({
   selector: 'app-product',
@@ -11,23 +9,16 @@ import { ProductsPromiseService } from '../../service/products-promise.service';
   styleUrls: ['./product.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule],
 })
 export class ProductComponent {
-
   @Input() item!: ProductModel;
-  @Input() isAdminTab: boolean = false;
+  @Input() isAdminTab: boolean | null = false;
 
   @Output() addProductToCart: EventEmitter<ProductModel> = new EventEmitter();
-  @Output() reload: EventEmitter<void> = new EventEmitter();
   @Output() detailsClick: EventEmitter<number> = new EventEmitter();
   @Output() editClick: EventEmitter<number> = new EventEmitter();
-
-  constructor(
-    public loginService: LoginService,
-    private productsPromiseService: ProductsPromiseService) {
-  }
-
+  @Output() deleteClick: EventEmitter<number> = new EventEmitter();
 
   onAddToCart(product: ProductModel): void {
     if (product?.isAvailable) {
@@ -39,14 +30,11 @@ export class ProductComponent {
     this.detailsClick.emit(this.item?.id);
   }
 
-
   onEdit(id: number): void {
     this.editClick.emit(id);
   }
 
   onDelete(id: number): void {
-    this.productsPromiseService.delete(+id)
-      .then(() => this.reload.emit());
+    this.deleteClick.emit(id);
   }
-
 }

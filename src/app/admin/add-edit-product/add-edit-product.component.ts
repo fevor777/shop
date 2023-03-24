@@ -1,10 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+import { RouterModule, UrlTree } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Observable, take } from 'rxjs';
 
-import { ProductsPromiseService } from '../../product/service/products-promise.service';
+import { selectSelectedProductByUrl } from '../../core/@ngrx';
+import * as ProductsActions from '../../core/@ngrx/products/products.actions';
 import { ProductModel } from '../../shared/model/product.model';
+import * as RouterActions from './../../core/@ngrx/router/router.actions';
 
 @Component({
   selector: 'app-add-edit-product',
@@ -15,37 +19,60 @@ import { ProductModel } from '../../shared/model/product.model';
 })
 export class AddEditProductComponent implements OnInit {
   product: ProductModel = {} as ProductModel;
-  isSaved: boolean = false;
-  oldProduct: ProductModel = {} as ProductModel;
 
-  constructor(
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private productsPromiseService: ProductsPromiseService
-  ) {}
+  @ViewChild('form', { static: false })
+  productForm!: NgForm;
+
+  private originalProduct: ProductModel = {} as ProductModel;
+  private isSaved: boolean = false;
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.product =
-      this.activatedRoute.snapshot.data['product'] ?? ({ isAvailable: true } as ProductModel);
-    this.oldProduct = { ...this.product };
+    this.store
+      .select(selectSelectedProductByUrl)
+      .pipe(take(1))
+      .subscribe((pr) => {
+        this.product = { ...pr };
+        this.originalProduct = { ...pr };
+      });
   }
 
   onBack(): void {
-    this.router.navigate(['/admin']);
+    this.store.dispatch(RouterActions.back());
   }
 
   onSave(): void {
-    const method = this.product.id ? 'update' : 'create';
-    const productForSave = this.product.id
-      ? { id: this.product.id, name: this.product.name, isAvailable: true }
-      : this.product;
-    this.productsPromiseService[method](productForSave).then(() => {
-      this.isSaved = true;
-      this.onBack();
-    });
+    this.isSaved = true;
+    const product = { ...this.product } as ProductModel;
+    if (this.product.id) {
+      this.store.dispatch(ProductsActions.updateProduct({ product }));
+    } else {
+      this.store.dispatch(ProductsActions.createProduct({ product }));
+    }
   }
 
-  canDeactivate(): boolean {
-    return this.isSaved || this.product?.name === this.oldProduct?.name;
+  canDeactivate():
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree>
+    | boolean
+    | UrlTree {
+    if (this.isSaved) {
+      return true;
+    }
+    if (this.productForm.pristine) {
+      return true;
+    }
+    const flags = (
+      Object.keys(this.product) as (keyof ProductModel)[]
+    ).map((key) => {
+      if (this.originalProduct[key] === this.product[key]) {
+        return true;
+      }
+      return false;
+    });
+    if (flags.every((el) => el)) {
+      return true;
+    }
+    return confirm('Discard changes?');
   }
 }

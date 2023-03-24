@@ -3,12 +3,12 @@
     <div>price: {{ item.price | currency }}</div>
     <div>isAvailable: {{ item.isAvailable }}</div>
     
-    <ng-container *ngIf="!isAdminTab">
-        <button [disabled]="!item.isAvailable" (click)="onAddToCart(item)">Add to cart</button>
-        <button (click)="onDetailsClick()">Details</button>
-    </ng-container>
-    <ng-container *ngIf="loginService.isAdmin() && isAdminTab">
+    <ng-container *ngIf="isAdminTab; else elseBlock">
         <button (click)="onEdit(item.id)">Edit</button>
         <button (click)="onDelete(item.id)">Delete</button>
     </ng-container>
+    <ng-template #elseBlock>
+        <button [disabled]="!item.isAvailable" (click)="onAddToCart(item)">Add to cart</button>
+        <button (click)="onDetailsClick()">Details</button>
+    </ng-template>
 </div>

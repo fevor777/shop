@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CartService } from '../../../shared/service/cart.service';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+
+import { selectCartProductsExisting, selectCartProductsTotalQuantity } from '../../@ngrx';
 
 @Component({
   selector: 'app-nav-menu',
@@ -9,8 +12,16 @@ import { CartService } from '../../../shared/service/cart.service';
   imports: [CommonModule, RouterModule],
   templateUrl: './nav-menu.component.html'
 })
-export class NavMenuComponent {
+export class NavMenuComponent implements OnInit {
 
-  constructor(public cartService: CartService) {}
+  isEmptyCart$!: Observable<boolean>;
+  totalQuantity$!: Observable<number>;
+
+  constructor(private store: Store) {}
+
+  ngOnInit(): void {
+    this.isEmptyCart$ = this.store.select(selectCartProductsExisting);
+    this.totalQuantity$ = this.store.select(selectCartProductsTotalQuantity);
+  }
 
 }

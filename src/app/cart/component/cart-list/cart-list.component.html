@@ -1,4 +1,4 @@
-<ng-container *ngIf="cartProducts">
+<ng-container *ngIf="(cartProducts$ | async) as cartProducts">
     <div class="app-cart-list" *ngIf="cartProducts.length; else emptyBlock">
         <app-order-by
             [keys]="cartProductModelKeys"
@@ -18,8 +18,8 @@
                 ></app-cart-item>
             </li>
         </ul>
-        <div [ngStyle]="{ 'color': 'red' }">Total cost: {{ cartService.totalCost | currency  }}</div>
-        <div [ngStyle]="{ 'color': 'green' }">Total quantity: {{ cartService.totalQuantity }}</div>
+        <div [ngStyle]="{ 'color': 'red' }">Total cost: {{ (totalCost$ | async) | currency  }}</div>
+        <div [ngStyle]="{ 'color': 'green' }">Total quantity: {{ totalQuantity$ | async }}</div>
         <br>
         <button (click)="onDeleteAll()">Delete all</button>
     </div>

@@ -1,14 +1,26 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  CanLoad,
+  Route,
+  RouterStateSnapshot,
+  UrlSegment,
+  UrlTree,
+} from '@angular/router';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { LoginService } from 'src/app/login/login.service';
+
+import { LoginService } from '../../login/login.service';
+import * as RouterActions from './../../core/@ngrx/router/router.actions';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminGuard implements CanActivate, CanLoad {
 
-  constructor(private loginService: LoginService, private router: Router) {}
+  constructor(private loginService: LoginService, private store: Store) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -17,7 +29,7 @@ export class AdminGuard implements CanActivate, CanLoad {
         return true;
     } else {
         this.loginService.redirectUrl = state.url || '';
-        this.router.navigate(['/login']);
+        this.store.dispatch(RouterActions.go({ path: ['/login'] }));
         alert('Please login as Admin');
         return false;
     }
@@ -29,7 +41,7 @@ export class AdminGuard implements CanActivate, CanLoad {
         return true;
     } else {
         this.loginService.redirectUrl = segments.map(s => s.path).join('/') || '';
-        this.router.navigate(['/login']);
+        this.store.dispatch(RouterActions.go({ path: ['/login'] }));
         alert('Please login as Admin');
         return false;
     }

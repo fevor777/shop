@@ -1,5 +1,5 @@
 Details:
-<ng-container *ngIf="productObs | async as pr">
+<ng-container *ngIf="product$ | async as pr">
     <div>name: {{ pr?.name }}</div>
     <div>description: {{ pr?.description }}</div>
     <div>price: {{ pr?.price | currency }}</div>
