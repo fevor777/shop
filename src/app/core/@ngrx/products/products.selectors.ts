@@ -3,15 +3,15 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { ProductModel } from '../../../shared/model/product.model';
 import { productsFeatureKey } from '../app.state';
 import { selectRouterState } from '../router';
-import { ProductsState } from './products.state';
+import { adapter, ProductsState } from './products.state';
 
 export const selectProductsState =
   createFeatureSelector<ProductsState>(productsFeatureKey);
 
-export const selectProductsData = createSelector(
-  selectProductsState,
-  (state: ProductsState) => state.data
-);
+  export const {
+    selectEntities: selectProductsEntities,
+    selectAll: selectProductsData
+   } = adapter.getSelectors(selectProductsState);
 
 export const selectProductsError = createSelector(
   selectProductsState,
@@ -19,12 +19,12 @@ export const selectProductsError = createSelector(
 );
 
 export const selectSelectedProductByUrl = createSelector(
-  selectProductsData,
+  selectProductsEntities,
   selectRouterState,
   (products, router): ProductModel => {
     const productID = router.state.params['id'];
-    if (productID && Array.isArray(products)) {
-      return products.find((product) => product.id === +productID);
+    if (productID) {
+      return products[productID] as ProductModel;
     } else {
       return {} as ProductModel;
     }
