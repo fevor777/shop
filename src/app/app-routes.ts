@@ -19,7 +19,7 @@ export default [
     path: 'order',
     canActivate: [IsCartEmptyGuard],
     loadComponent: () =>
-      import('./order/process-order.component').then(
+      import('./order/components/process-order.component').then(
         (mod) => mod.ProcessOrderComponent
       ),
   },

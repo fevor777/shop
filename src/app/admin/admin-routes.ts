@@ -4,7 +4,7 @@ import { AdminGuard } from '../core/guard/admin.guard';
 import { IsCartEmptyGuard } from '../core/guard/is-cart-empty.guard';
 import { ProductExistsGuard } from '../core/guard/prodect-existing.guard';
 import { ProductsStatePreloadingGuard } from '../core/guard/product-state-preloading.guard';
-import { ProcessOrderComponent } from '../order/process-order.component';
+import { ProcessOrderComponent } from '../order/components/process-order.component';
 import { ProductListComponent } from '../product/component/product-list/product-list.component';
 import { AddEditProductComponent } from './add-edit-product/add-edit-product.component';
 import { AdminComponent } from './admin.component';
